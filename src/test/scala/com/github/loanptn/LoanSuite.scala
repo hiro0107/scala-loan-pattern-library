@@ -8,7 +8,9 @@ class LoanSuite extends FunSuite with ShouldMatchers {
   import java.io._
   test("usingが正常に使用できる") {
     val res = mock(classOf[InputStream])
-    using(res) { res => }
+    using(res) { res =>
+      verify(res, never()).close()
+    }
     verify(res, times(1)).close()
   }
   test("manageが正常に使用できる") {
