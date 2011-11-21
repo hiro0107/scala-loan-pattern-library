@@ -31,5 +31,61 @@ class LoanSuite extends FunSuite with ShouldMatchers {
       verify(res2, never()).close()
     }
     verify(res, times(1)).close()
+    verify(res2, times(1)).close()
   }
+
+  test("OutputStreamでmanageが正常に使用できる") {
+    import java.io._
+    var res = mock(classOf[OutputStream])
+    for(in <- manage(res)) {
+      verify(res, never()).close()
+    }
+    verify(res, times(1)).close()
+  }
+
+  test("Sourceでmanageが正常に使用できる") {
+    import scala.io._
+    var res = mock(classOf[Source])
+    for(in <- manage(res)) {
+      verify(res, never()).close()
+    }
+    verify(res, times(1)).close()
+  }
+
+  test("Connectionでmanageが正常に使用できる") {
+    import java.sql._
+    var res = mock(classOf[Connection])
+    for(in <- manage(res)) {
+      verify(res, never()).close()
+    }
+    verify(res, times(1)).close()
+  }
+
+  test("Statementでmanageが正常に使用できる") {
+    import java.sql._
+    var res = mock(classOf[Statement])
+    for(in <- manage(res)) {
+      verify(res, never()).close()
+    }
+    verify(res, times(1)).close()
+  }
+
+  test("PreparedStatementでmanageが正常に使用できる") {
+    import java.sql._
+    var res = mock(classOf[PreparedStatement])
+    for(in <- manage(res)) {
+      verify(res, never()).close()
+    }
+    verify(res, times(1)).close()
+  }
+
+  test("ResultSetでmanageが正常に使用できる") {
+    import java.sql._
+    var res = mock(classOf[ResultSet])
+    for(in <- manage(res)) {
+      verify(res, never()).close()
+    }
+    verify(res, times(1)).close()
+  }
+
 }
