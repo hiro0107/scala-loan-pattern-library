@@ -35,6 +35,25 @@ class LoanSuite extends FunSuite with ShouldMatchers {
     inOrd.verify(res, times(1)).close()
   }
 
+  test("manageが正常に使用できる(その3)") {
+    import java.io._
+    class InputStreamMock(value: Int) extends InputStream {
+      def read() = value
+    }
+    val res = spy(new InputStreamMock(5)).asInstanceOf[InputStream]
+    val res2 = spy(new InputStreamMock(7)).asInstanceOf[InputStream]
+    val x = for(in <- manage(res);
+        in2 <- manage(res2)) yield {
+      verify(res, never()).close()
+      verify(res2, never()).close()
+      (res.read, res2.read)
+    }
+    x.resource should be (5, 7)
+    val inOrd = inOrder(res, res2)
+    inOrd.verify(res2, times(1)).close()
+    inOrd.verify(res, times(1)).close()
+  }
+
   test("OutputStreamでmanageが正常に使用できる") {
     import java.io._
     var res = mock(classOf[OutputStream])
