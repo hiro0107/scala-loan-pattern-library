@@ -1,12 +1,12 @@
 #ScalaでのLoan Pattern実装
 
-#使い方
+##使い方
 ```
 import com.github.loanptn._
 
 import java.io._
 
-var res: InputStream = ...;
+val res: InputStream = ...;
 using(res) { in =>
   // do something
 }
@@ -19,7 +19,7 @@ import com.github.loanptn._
 
 import java.io._
 
-var res: InputStream = ...;
+val res: InputStream = ...;
 for(in <- manage(res)) {
   // do something
 }
