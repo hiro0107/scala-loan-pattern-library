@@ -10,9 +10,10 @@ var res: InputStream = ...;
 using(res) { in =>
   // do something
 }
-
 ```
+
 or
+
 ```
 import com.github.loanptn._
 
