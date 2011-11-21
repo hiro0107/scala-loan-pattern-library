@@ -48,7 +48,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
       verify(res2, never()).close()
       (res.read, res2.read)
     }
-    x.resource should be (5, 7)
+    x() should be (5, 7)
     val inOrd = inOrder(res, res2)
     inOrd.verify(res2, times(1)).close()
     inOrd.verify(res, times(1)).close()

@@ -12,5 +12,5 @@ class ManagedResource[R](res: R, resourceCleaner: ResourceCleaner[R]){
       resourceCleaner.clean(res)
     }
   def foreach(f: (R) => Unit): Unit = try { f(res) } finally { resourceCleaner.clean(res) }
-  def resource() = res
+  def apply() = res
 }
