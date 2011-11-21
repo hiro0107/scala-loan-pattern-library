@@ -10,3 +10,5 @@ target/
 *.ipr
 *.iws
 .*.sw?
+.DS_Store
+
