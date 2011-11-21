@@ -1,6 +1,6 @@
-#Scala‚Å‚ÌLoan PatternÀ‘•
+#Scalaã§ã®Loan Patternå®Ÿè£…
 
-#g‚¢•û
+#ä½¿ã„æ–¹
 ```
 import com.github.loanptn._
 
