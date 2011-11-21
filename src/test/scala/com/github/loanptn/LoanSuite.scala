@@ -30,8 +30,9 @@ class LoanSuite extends FunSuite with ShouldMatchers {
       verify(res, never()).close()
       verify(res2, never()).close()
     }
-    verify(res, times(1)).close()
-    verify(res2, times(1)).close()
+    val inOrd = inOrder(res, res2)
+    inOrd.verify(res2, times(1)).close()
+    inOrd.verify(res, times(1)).close()
   }
 
   test("OutputStreamでmanageが正常に使用できる") {
