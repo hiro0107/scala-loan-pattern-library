@@ -1,13 +1,32 @@
 package com.github.loanptn
 
+/**
+ * リソースをクリアするTrait
+ * @tparam R リソースのクラス
+ */
 trait ResourceCleaner[R] {
+  /**
+   * リソースをクリアする
+   * @param res リソース
+   */
   def clean(res: R): Unit
 }
 
+/**
+ * closeメソッドをもつリソースが対象のResourceCleaner
+ * @tparam R closeメソッドを持つリソースのクラス
+ */
 class CloseableResourceCleaner[R <: { def close() }] extends ResourceCleaner[R]{
+  /**
+   * closeメソッドを使いリソースをクリアする
+   * @param res リソース
+   */
   override def clean(res: R): Unit = res.close()
 }
 
+/**
+ * 各種implicit parameterの定義
+ */
 object ResourceCleaner {
   import java.io._
   implicit val inputStreamResourceCleaner = new CloseableResourceCleaner[InputStream]
