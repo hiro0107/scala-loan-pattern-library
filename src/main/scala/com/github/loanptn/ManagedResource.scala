@@ -3,31 +3,33 @@ package com.github.loanptn
 /**
  * 管理されたリソース
  */
-class ManagedResource[R](res: R, resourceCleaner: ResourceCleaner[R]){
+class ManagedResource[R](resAndCleaner: => (R, ResourceCleaner[R]) ){
+  // 何度もapplyが呼ばれても、問題が起きないようにキャッシュする
+  private lazy val resourceAndCleaner = resAndCleaner
+
+  def cleaner() = resourceAndCleaner._2
+  def resource() = resourceAndCleaner._1
+  def apply() = resource
   def flatMap[B](f: (R) => ManagedResource[B]): ManagedResource[B] =
-    try {
-      f(res)
-    } finally {
-      resourceCleaner.clean(res)
-    }
+    new ManagedResource[B]({
+      val (res, cleaner) = this.resourceAndCleaner
+      try {
+        val managedB = f(res)
+        managedB.resourceAndCleaner
+      } finally {
+        cleaner.clean(res)
+      }
+    })
 
   def map[B]
         (f: (R) => B)
         (implicit cleaner: ResourceCleaner[B]
-           = new ResourceCleaner[B] {
+           = new ResourceCleaner[B]{
                def clean(res: B): Unit = {}
              } ):ManagedResource[B] =
-    try {
-      new ManagedResource(f(res), cleaner)
-    } finally {
-      resourceCleaner.clean(res)
+    flatMap { r =>
+      new ManagedResource[B]( (f(r), cleaner) )
     }
 
-  def foreach(f: (R) => Unit): Unit =
-    try {
-      f(res)
-    } finally {
-      resourceCleaner.clean(res)
-    }
-  def apply() = res
+  def foreach(f: (R) => Unit): Unit = { map(f).apply(); }
 }

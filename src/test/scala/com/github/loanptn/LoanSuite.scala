@@ -54,6 +54,85 @@ class LoanSuite extends FunSuite with ShouldMatchers {
     inOrd.verify(res, times(1)).close()
   }
 
+  test("flatMapが合成できる") {
+    import java.io._
+    class InputStreamMock(value: Int) extends InputStream {
+      def read() = value
+    }
+    val res = spy(new InputStreamMock(5)).asInstanceOf[InputStream]
+    val x = for(in <- manage(res)) yield {
+      verify(res, never()).close()
+      res.read
+    }
+    val res2 = spy(new InputStreamMock(7)).asInstanceOf[InputStream]
+
+    verify(res, never()).close()
+    val y = for(x_val <- x;
+        in <- manage(res2)) yield {
+      verify(res, times(1)).close()
+      verify(res2, never()).close()
+      (x_val, res2.read)
+    }
+
+    y() should be (5, 7)
+    x() should be (5)
+    val inOrd = inOrder(res, res2)
+    inOrd.verify(res, times(1)).close()
+    inOrd.verify(res2, times(1)).close()
+  }
+
+  test("flatMapが合成できる(その2)") {
+    import java.io._
+    class InputStreamMock(value: Int) extends InputStream {
+      def read() = value
+    }
+    val res = spy(new InputStreamMock(5)).asInstanceOf[InputStream]
+    val x = for(in <- manage(res)) yield {
+      verify(res, never()).close()
+      res.read
+    }
+    x() should be (5)
+    val res2 = spy(new InputStreamMock(7)).asInstanceOf[InputStream]
+
+    verify(res, times(1)).close()
+    val y = for(x_val <- x;
+        in <- manage(res2)) yield {
+      verify(res, times(1)).close()
+      verify(res2, never()).close()
+      (x_val, res2.read)
+    }
+
+    y() should be (5, 7)
+    val inOrd = inOrder(res, res2)
+    inOrd.verify(res, times(1)).close()
+    inOrd.verify(res2, times(1)).close()
+  }
+  test("flatMapが合成できる(その3)") {
+    import java.io._
+    class InputStreamMock(value: Int) extends InputStream {
+      def read() = value
+    }
+    val res = spy(new InputStreamMock(5)).asInstanceOf[InputStream]
+    val x = for(in <- manage(res)) yield {
+      verify(res, never()).close()
+      res.read
+    }
+    val res2 = spy(new InputStreamMock(7)).asInstanceOf[InputStream]
+
+    verify(res, never()).close()
+    val y = for(in <- manage(res2);
+                x_val <- x) yield {
+      verify(res, times(1)).close()
+      verify(res2, never()).close()
+      (x_val, res2.read)
+    }
+
+    y() should be (5, 7)
+    val inOrd = inOrder(res, res2)
+    inOrd.verify(res, times(1)).close()
+    inOrd.verify(res2, times(1)).close()
+  }
+
   test("OutputStreamでmanageが正常に使用できる") {
     import java.io._
     var res = mock(classOf[OutputStream])
