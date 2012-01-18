@@ -61,3 +61,12 @@ val x2 = for(result1 <- x1;
 }
 val (result1, result2) = x2()
 ```
+sbtを使用の方は以下のライブラリを加えて下さい。
+```
+resolvers += "hiro0107 repository" at "https://github.com/hiro0107/maven-repo/raw/master/release"
+
+libraryDependencies ++= Seq(
+  "com.github.loanptn" % "scala-loan-pattern-library" % "1.0"
+)
+```
+
