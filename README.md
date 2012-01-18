@@ -42,7 +42,9 @@ val x = for(in <- manage(res);
 // このapplyを呼んだ時点で実行がされる
 val result = x()
 ```
+
 以下のように合成もできる
+
 ```
 import java.io._
 
@@ -59,4 +61,3 @@ val x2 = for(result1 <- x1;
 }
 val (result1, result2) = x2()
 ```
-
