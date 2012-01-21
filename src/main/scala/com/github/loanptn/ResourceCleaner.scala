@@ -1,5 +1,7 @@
 package com.github.loanptn
 
+import java.io.{Closeable => JCloseable}
+
 /**
  * リソースをクリアするTrait
  * @tparam R リソースのクラス
@@ -16,29 +18,27 @@ trait ResourceCleaner[R] {
  * closeメソッドをもつリソースが対象のResourceCleaner
  * @tparam R closeメソッドを持つリソースのクラス
  */
-class CloseableResourceCleaner[R <: { def close() }] extends ResourceCleaner[R]{
+class CloseableResourceCleaner extends ResourceCleaner[{ def close() }]{
   /**
    * closeメソッドを使いリソースをクリアする
    * @param res リソース
    */
-  override def clean(res: R): Unit = res.close()
+  override def clean(res: { def close() }): Unit = res.close()
+}
+
+class JavaIoCloseableResourceCleaner extends ResourceCleaner[JCloseable]{
+  /**
+   * closeメソッドを使いリソースをクリアする
+   * @param res リソース
+   */
+  override def clean(res: JCloseable): Unit = res.close()
 }
 
 /**
  * 各種implicit parameterの定義
  */
 object ResourceCleaner {
-  import java.io._
-  implicit val inputStreamResourceCleaner = new CloseableResourceCleaner[InputStream]
-  implicit val outputStreamResourceCleaner = new CloseableResourceCleaner[OutputStream]
-
-  import scala.io._
-  implicit val sourceResourceCleaner = new CloseableResourceCleaner[Source]
-
-  import java.sql._
-  implicit val connectionResourceCleaner = new CloseableResourceCleaner[Connection]
-  implicit val statementResourceCleaner = new CloseableResourceCleaner[Statement]
-  implicit val preparedStatementResourceCleaner = new CloseableResourceCleaner[PreparedStatement]
-  implicit val resultSetResourceCleaner = new CloseableResourceCleaner[ResultSet]
+  implicit val closeableResourceCleaner = new CloseableResourceCleaner
+  implicit val javaIoCloseableResourceCleaner = new JavaIoCloseableResourceCleaner
 }
 

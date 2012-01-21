@@ -5,10 +5,11 @@ import org.scalatest.FunSuite
 import org.scalatest.matchers.ShouldMatchers
  
 class LoanSuite extends FunSuite with ShouldMatchers {
-  import java.io._
+  import java.io.{Closeable => JCloseable, _}
+  type Closeable = { def close() }
   test("usingが正常に使用できる") {
     val res = mock(classOf[InputStream])
-    using(res) { res =>
+    using[Unit, JCloseable](res) { res =>
       verify(res, never()).close()
     }
     verify(res, times(1)).close()
@@ -16,7 +17,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
   test("manageが正常に使用できる") {
     import java.io._
     val res = mock(classOf[InputStream])
-    for(in <- manage(res)) {
+    for(in <- manage[JCloseable](res)) {
       verify(res, never()).close()
     }
     verify(res, times(1)).close()
@@ -25,8 +26,8 @@ class LoanSuite extends FunSuite with ShouldMatchers {
     import java.io._
     val res = mock(classOf[InputStream])
     val res2 = mock(classOf[InputStream])
-    for(in <- manage(res);
-        in2 <- manage(res2)) {
+    for(in <- manage[JCloseable](res);
+        in2 <- manage[JCloseable](res2)) {
       verify(res, never()).close()
       verify(res2, never()).close()
     }
@@ -42,8 +43,8 @@ class LoanSuite extends FunSuite with ShouldMatchers {
     }
     val res = spy(new InputStreamMock(5))
     val res2 = spy(new InputStreamMock(7))
-    val x = for(in <- manage[InputStream](res);
-        in2 <- manage[InputStream](res2)) yield {
+    val x = for(in <- manage[JCloseable](res);
+        in2 <- manage[JCloseable](res2)) yield {
       verify(res, never()).close()
       verify(res2, never()).close()
       (res.read, res2.read)
@@ -60,7 +61,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
       def read() = value
     }
     val res = spy(new InputStreamMock(5))
-    val x = for(in <- manage[InputStream](res)) yield {
+    val x = for(in <- manage[JCloseable](res)) yield {
       verify(res, never()).close()
       res.read
     }
@@ -68,7 +69,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
 
     verify(res, never()).close()
     val y = for(x_val <- x;
-        in <- manage[InputStream](res2)) yield {
+        in <- manage[JCloseable](res2)) yield {
       verify(res, times(1)).close()
       verify(res2, never()).close()
       (x_val, res2.read)
@@ -87,7 +88,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
       def read() = value
     }
     val res = spy(new InputStreamMock(5))
-    val x = for(in <- manage[InputStream](res)) yield {
+    val x = for(in <- manage[JCloseable](res)) yield {
       verify(res, never()).close()
       res.read
     }
@@ -96,7 +97,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
 
     verify(res, times(1)).close()
     val y = for(x_val <- x;
-        in <- manage[InputStream](res2)) yield {
+        in <- manage[JCloseable](res2)) yield {
       verify(res, times(1)).close()
       verify(res2, never()).close()
       (x_val, res2.read)
@@ -113,14 +114,14 @@ class LoanSuite extends FunSuite with ShouldMatchers {
       def read() = value
     }
     val res = spy(new InputStreamMock(5))
-    val x = for(in <- manage[InputStream](res)) yield {
+    val x = for(in <- manage[JCloseable](res)) yield {
       verify(res, never()).close()
       res.read
     }
     val res2 = spy(new InputStreamMock(7))
 
     verify(res, never()).close()
-    val y = for(in <- manage[InputStream](res2);
+    val y = for(in <- manage[JCloseable](res2);
                 x_val <- x) yield {
       verify(res, times(1)).close()
       verify(res2, never()).close()
@@ -136,7 +137,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
   test("OutputStreamでmanageが正常に使用できる") {
     import java.io._
     var res = mock(classOf[OutputStream])
-    for(in <- manage(res)) {
+    for(in <- manage[JCloseable](res)) {
       verify(res, never()).close()
     }
     verify(res, times(1)).close()
@@ -145,7 +146,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
   test("Sourceでmanageが正常に使用できる") {
     import scala.io._
     var res = mock(classOf[Source])
-    for(in <- manage(res)) {
+    for(in <- manage[Closeable](res)) {
       verify(res, never()).close()
     }
     verify(res, times(1)).close()
@@ -154,7 +155,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
   test("Connectionでmanageが正常に使用できる") {
     import java.sql._
     var res = mock(classOf[Connection])
-    for(in <- manage(res)) {
+    for(in <- manage[Closeable](res)) {
       verify(res, never()).close()
     }
     verify(res, times(1)).close()
@@ -163,7 +164,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
   test("Statementでmanageが正常に使用できる") {
     import java.sql._
     var res = mock(classOf[Statement])
-    for(in <- manage(res)) {
+    for(in <- manage[Closeable](res)) {
       verify(res, never()).close()
     }
     verify(res, times(1)).close()
@@ -172,7 +173,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
   test("PreparedStatementでmanageが正常に使用できる") {
     import java.sql._
     var res = mock(classOf[PreparedStatement])
-    for(in <- manage(res)) {
+    for(in <- manage[Closeable](res)) {
       verify(res, never()).close()
     }
     verify(res, times(1)).close()
@@ -181,7 +182,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
   test("ResultSetでmanageが正常に使用できる") {
     import java.sql._
     var res = mock(classOf[ResultSet])
-    for(in <- manage(res)) {
+    for(in <- manage[Closeable](res)) {
       verify(res, never()).close()
     }
     verify(res, times(1)).close()
