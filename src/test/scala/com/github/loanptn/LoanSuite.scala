@@ -40,10 +40,10 @@ class LoanSuite extends FunSuite with ShouldMatchers {
     class InputStreamMock(value: Int) extends InputStream {
       def read() = value
     }
-    val res = spy(new InputStreamMock(5)).asInstanceOf[InputStream]
-    val res2 = spy(new InputStreamMock(7)).asInstanceOf[InputStream]
-    val x = for(in <- manage(res);
-        in2 <- manage(res2)) yield {
+    val res = spy(new InputStreamMock(5))
+    val res2 = spy(new InputStreamMock(7))
+    val x = for(in <- manage[InputStream](res);
+        in2 <- manage[InputStream](res2)) yield {
       verify(res, never()).close()
       verify(res2, never()).close()
       (res.read, res2.read)
@@ -59,16 +59,16 @@ class LoanSuite extends FunSuite with ShouldMatchers {
     class InputStreamMock(value: Int) extends InputStream {
       def read() = value
     }
-    val res = spy(new InputStreamMock(5)).asInstanceOf[InputStream]
-    val x = for(in <- manage(res)) yield {
+    val res = spy(new InputStreamMock(5))
+    val x = for(in <- manage[InputStream](res)) yield {
       verify(res, never()).close()
       res.read
     }
-    val res2 = spy(new InputStreamMock(7)).asInstanceOf[InputStream]
+    val res2 = spy(new InputStreamMock(7))
 
     verify(res, never()).close()
     val y = for(x_val <- x;
-        in <- manage(res2)) yield {
+        in <- manage[InputStream](res2)) yield {
       verify(res, times(1)).close()
       verify(res2, never()).close()
       (x_val, res2.read)
@@ -86,17 +86,17 @@ class LoanSuite extends FunSuite with ShouldMatchers {
     class InputStreamMock(value: Int) extends InputStream {
       def read() = value
     }
-    val res = spy(new InputStreamMock(5)).asInstanceOf[InputStream]
-    val x = for(in <- manage(res)) yield {
+    val res = spy(new InputStreamMock(5))
+    val x = for(in <- manage[InputStream](res)) yield {
       verify(res, never()).close()
       res.read
     }
     x() should be (5)
-    val res2 = spy(new InputStreamMock(7)).asInstanceOf[InputStream]
+    val res2 = spy(new InputStreamMock(7))
 
     verify(res, times(1)).close()
     val y = for(x_val <- x;
-        in <- manage(res2)) yield {
+        in <- manage[InputStream](res2)) yield {
       verify(res, times(1)).close()
       verify(res2, never()).close()
       (x_val, res2.read)
@@ -112,15 +112,15 @@ class LoanSuite extends FunSuite with ShouldMatchers {
     class InputStreamMock(value: Int) extends InputStream {
       def read() = value
     }
-    val res = spy(new InputStreamMock(5)).asInstanceOf[InputStream]
-    val x = for(in <- manage(res)) yield {
+    val res = spy(new InputStreamMock(5))
+    val x = for(in <- manage[InputStream](res)) yield {
       verify(res, never()).close()
       res.read
     }
-    val res2 = spy(new InputStreamMock(7)).asInstanceOf[InputStream]
+    val res2 = spy(new InputStreamMock(7))
 
     verify(res, never()).close()
-    val y = for(in <- manage(res2);
+    val y = for(in <- manage[InputStream](res2);
                 x_val <- x) yield {
       verify(res, times(1)).close()
       verify(res2, never()).close()
