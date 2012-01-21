@@ -68,7 +68,7 @@ sbtを使用の方は以下のライブラリを加えて下さい。
 resolvers += "hiro0107 repository" at "https://github.com/hiro0107/maven-repo/raw/master/release"
 
 libraryDependencies ++= Seq(
-  "com.github.loanptn" % "scala-loan-pattern-library" % "1.0"
+  "com.github.loanptn" % "scala-loan-pattern-library" % "1.1"
 )
 ```
 
