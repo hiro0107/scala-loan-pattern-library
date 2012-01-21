@@ -20,5 +20,8 @@ object ResourceCleaner {
   implicit val closeableResourceCleaner = new ResourceCleaner[{ def close() }]{
     override def clean(res: { def close() }): Unit = res.close()
   }
+  implicit val disposeableResourceCleaner = new ResourceCleaner[{ def dispose() }]{
+    override def clean(res: { def dispose() }): Unit = res.dispose()
+  }
 }
 
