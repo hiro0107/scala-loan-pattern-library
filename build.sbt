@@ -2,7 +2,7 @@ organization := "com.github.loanptn"
 
 name := "scala-loan-pattern-library"
 
-version := "1.0"
+version := "1.1"
 
 scalaVersion := "2.9.1"
 
