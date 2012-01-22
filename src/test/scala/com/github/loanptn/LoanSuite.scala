@@ -143,15 +143,16 @@ class LoanSuite extends FunSuite with ShouldMatchers {
         case other: InputStreamMock => this.read == other.read
       }
     }
+    def unit[R](res: R)(implicit resourceCleaner: ResourceCleaner[R]) = manage(res)(resourceCleaner)
     def create(i: Int) = new InputStreamMock(i)
-    def f(i: InputStreamMock) = manage(create(i.read() * 3))
+    def f(i: InputStreamMock) = unit(create(i.read() * 3))
 
-    assert( manage(create(5)).flatMap(f).apply == f(create(5)).apply )
+    assert( unit(create(5)).flatMap(f).apply == f(create(5)).apply )
 
-    assert( manage(create(5)).flatMap(manage(_)).apply == manage(create(5)).apply )
-    def g(i: InputStreamMock) = manage(create(i.read() * 7))
+    assert( unit(create(5)).flatMap(manage(_)).apply == unit(create(5)).apply )
+    def g(i: InputStreamMock) = unit(create(i.read() * 7))
 
-    assert( manage(create(5)).flatMap(f).flatMap(g).apply == manage(create(5)).flatMap(f(_).flatMap(g)).apply )
+    assert( unit(create(5)).flatMap(f).flatMap(g).apply == unit(create(5)).flatMap(f(_).flatMap(g)).apply )
   }
 
   test("OutputStreamでmanageが正常に使用できる") {
