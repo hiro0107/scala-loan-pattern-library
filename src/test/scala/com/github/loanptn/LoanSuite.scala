@@ -147,12 +147,12 @@ class LoanSuite extends FunSuite with ShouldMatchers {
     def create(i: Int) = new InputStreamMock(i)
     def f(i: InputStreamMock) = unit(create(i.read() * 3))
 
-    assert( unit(create(5)).flatMap(f).apply == f(create(5)).apply )
+    assert( unit(create(5)).flatMap(f) == f(create(5)) )
 
-    assert( unit(create(5)).flatMap(manage(_)).apply == unit(create(5)).apply )
+    assert( unit(create(5)).flatMap(manage(_)) == unit(create(5)) )
     def g(i: InputStreamMock) = unit(create(i.read() * 7))
 
-    assert( unit(create(5)).flatMap(f).flatMap(g).apply == unit(create(5)).flatMap(f(_).flatMap(g)).apply )
+    assert( unit(create(5)).flatMap(f).flatMap(g) == unit(create(5)).flatMap(f(_).flatMap(g)) )
   }
 
   test("OutputStreamでmanageが正常に使用できる") {

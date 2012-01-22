@@ -32,4 +32,13 @@ class ManagedResource[R](resAndCleaner: => (R, ResourceCleaner[R]) ){
     }
 
   def foreach(f: (R) => Unit): Unit = { map(f).apply(); }
+
+  override def equals(o: Any) = o match {
+    case ManagedResource(r: R) => r == this.resource
+    case _ => false
+  }
+}
+
+object ManagedResource {
+  def unapply[R](res: ManagedResource[R]) = Some(res.resource)
 }
