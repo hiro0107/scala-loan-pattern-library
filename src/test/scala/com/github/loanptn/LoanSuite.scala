@@ -134,6 +134,26 @@ class LoanSuite extends FunSuite with ShouldMatchers {
     inOrd.verify(res2, times(1)).close()
   }
 
+  test("Monad則を満たす") {
+    import java.io._
+    class InputStreamMock(value: Int) extends InputStream {
+      def read() = value
+
+      override def equals(o: Any) = o match {
+        case other: InputStreamMock => this.read == other.read
+      }
+    }
+    def create(i: Int) = new InputStreamMock(i)
+    def f(i: InputStreamMock) = manage(create(i.read() * 3))
+
+    assert( manage(create(5)).flatMap(f).apply == f(create(5)).apply )
+
+    assert( manage(create(5)).flatMap(manage(_)).apply == manage(create(5)).apply )
+    def g(i: InputStreamMock) = manage(create(i.read() * 7))
+
+    assert( manage(create(5)).flatMap(f).flatMap(g).apply == manage(create(5)).flatMap(f(_).flatMap(g)).apply )
+  }
+
   test("OutputStreamでmanageが正常に使用できる") {
     import java.io._
     var res = mock(classOf[OutputStream])
