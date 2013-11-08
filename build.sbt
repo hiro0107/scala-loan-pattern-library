@@ -10,3 +10,11 @@ libraryDependencies ++= Seq(
   "org.scalatest" % "scalatest_2.9.1" % "1.6.1" % "test",
   "org.mockito" % "mockito-all" % "1.8.5"
 )
+
+seq(bintrayResolverSettings:_*)
+
+resolvers += bintray.Opts.resolver.repo("hiro0107", "maven")
+
+seq(bintrayPublishSettings:_*)
+
+licenses += ("Apache-1.1", url("http://apache.org/licenses/LICENSE-1.1"))
