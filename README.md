@@ -1,6 +1,6 @@
-#ScalaでのLoan Pattern実装
+# ScalaでのLoan Pattern実装
 
-##使い方
+## 使い方
 ```
 import com.github.loanptn._
 
@@ -68,6 +68,6 @@ sbtを使用の方は以下のライブラリを加えて下さい。
 resolvers += "hiro0107 repository" at "http://dl.bintray.com/hiro0107/maven"
 
 libraryDependencies ++= Seq(
-  "com.github.loanptn" % "scala-loan-pattern-library_2.10" % "1.1"
+  "com.github.loanptn" % "scala-loan-pattern-library_2.10" % "1.2"
 )
 ```

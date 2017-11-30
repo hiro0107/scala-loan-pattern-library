@@ -1,10 +1,10 @@
 package com.github.loanptn
 
-import org.mockito.Mockito._
-import org.scalatest.FunSuite
-import org.scalatest.matchers.ShouldMatchers
+import org.mockito.Mockito
+import org.mockito.Mockito.{verify, never, times, mock, inOrder, spy}
+import org.scalatest.{FunSuite, Matchers}
  
-class LoanSuite extends FunSuite with ShouldMatchers {
+class LoanSuite extends FunSuite with Matchers {
   import java.io.{Closeable => JCloseable, _}
   type Closeable = { def close() }
   test("usingが正常に使用できる") {
@@ -31,7 +31,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
       verify(res, never()).close()
       verify(res2, never()).close()
     }
-    val inOrd = inOrder(res, res2)
+    val inOrd = Mockito.inOrder(res, res2)
     inOrd.verify(res2, times(1)).close()
     inOrd.verify(res, times(1)).close()
   }
@@ -50,7 +50,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
       (res.read, res2.read)
     }
     x() should be (5, 7)
-    val inOrd = inOrder(res, res2)
+    val inOrd = Mockito.inOrder(res, res2)
     inOrd.verify(res2, times(1)).close()
     inOrd.verify(res, times(1)).close()
   }
@@ -77,7 +77,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
 
     y() should be (5, 7)
     x() should be (5)
-    val inOrd = inOrder(res, res2)
+    val inOrd = Mockito.inOrder(res, res2)
     inOrd.verify(res, times(1)).close()
     inOrd.verify(res2, times(1)).close()
   }
@@ -104,7 +104,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
     }
 
     y() should be (5, 7)
-    val inOrd = inOrder(res, res2)
+    val inOrd = Mockito.inOrder(res, res2)
     inOrd.verify(res, times(1)).close()
     inOrd.verify(res2, times(1)).close()
   }
@@ -129,7 +129,7 @@ class LoanSuite extends FunSuite with ShouldMatchers {
     }
 
     y() should be (5, 7)
-    val inOrd = inOrder(res, res2)
+    val inOrd = Mockito.inOrder(res, res2)
     inOrd.verify(res, times(1)).close()
     inOrd.verify(res2, times(1)).close()
   }
