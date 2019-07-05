@@ -1,3 +1,8 @@
+# Scala本家でLoad Patternが実装されました
+
+このライブラリーではなく、こちらを使用してください！  
+https://scala-lang.org/files/archive/api/2.13.0/scala/util/Using$.html
+
 # ScalaでのLoan Pattern実装
 
 ## 使い方
